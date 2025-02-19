@@ -4,10 +4,48 @@
 // PUSH1 0x04
 // SHR
 
+// Define function signatures
+#define function setValue(uint256) nonpayable returns ()
+#define function getValue() view returns (uint256)
 
+// Define a storage slot for value storage
+#define constant VALUE_SLOT = FREE_STORAGE_POINTER()
+
+// Macro to store a value in storage
+#define macro SET_VALUE() = takes(0) returns(0) {
+    0x04 calldataload  // Load calldata at offset 4 (first argument after function selector)
+    [VALUE_SLOT]       // Push the storage pointer onto the stack
+    sstore             // Store the value at VALUE_SLOT
+}
+
+// Macro to retrieve the stored value
+#define macro GET_VALUE() = takes(0) returns(0) {
+    [VALUE_SLOT]       // Push storage slot onto the stack
+    sload             // Load value from storage
+
+    // Store in memory for returning
+    0x00 mstore  
+
+    // Return 32 bytes from memory
+    0x20 0x00 return
+}
+
+// MAIN function dispatcher
 #define macro MAIN() = takes(0) returns(0) { 
- 0x00
- calldataload
- 0xe0
-shr
+    // Load function selector from calldata
+    0x00 calldataload   
+    0xE0 shr            // Extract first 4 bytes
+
+    // Compare function selectors and jump
+    dup1 __FUNC_SIG(setValue) eq setValue jumpi  
+    dup1 __FUNC_SIG(getValue) eq getValue jumpi  
+
+    // If function is unknown, revert
+    0x00 0x00 revert 
+
+    // Execute correct function
+    setValue:
+        SET_VALUE()
+    getValue:
+        GET_VALUE()
 }
