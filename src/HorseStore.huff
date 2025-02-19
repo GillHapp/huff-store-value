@@ -1,0 +1,5 @@
+// this code is first push the 102 onto the stack and then 4 and after that perform the SHR basically to right shift the 102 by 4
+
+PUSH2 0x0102
+PUSH1 0x04
+SHR
