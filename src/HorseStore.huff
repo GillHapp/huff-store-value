@@ -1,51 +1,56 @@
-// this code is first push the 102 onto the stack and then 4 and after that perform the SHR basically to right shift the 102 by 4
 
-// PUSH2 0x0102
-// PUSH1 0x04
-// SHR
-
-// Define function signatures
-#define function setValue(uint256) nonpayable returns ()
-#define function getValue() view returns (uint256)
-
-// Define a storage slot for value storage
-#define constant VALUE_SLOT = FREE_STORAGE_POINTER()
-
-// Macro to store a value in storage
-#define macro SET_VALUE() = takes(0) returns(0) {
-    0x04 calldataload  // Load calldata at offset 4 (first argument after function selector)
-    [VALUE_SLOT]       // Push the storage pointer onto the stack
-    sstore             // Store the value at VALUE_SLOT
-}
-
-// Macro to retrieve the stored value
-#define macro GET_VALUE() = takes(0) returns(0) {
-    [VALUE_SLOT]       // Push storage slot onto the stack
-    sload             // Load value from storage
-
-    // Store in memory for returning
-    0x00 mstore  
-
-    // Return 32 bytes from memory
-    0x20 0x00 return
-}
-
-// MAIN function dispatcher
 #define macro MAIN() = takes(0) returns(0) { 
     // Load function selector from calldata
     0x00 calldataload   
     0xE0 shr            // Extract first 4 bytes
 
-    // Compare function selectors and jump
-    dup1 __FUNC_SIG(setValue) eq setValue jumpi  
-    dup1 __FUNC_SIG(getValue) eq getValue jumpi  
+    // if f_sector == updateHorseNumber == 0xcdfead2e
+    // if f_sector == readHorseNumber == 0xe026c017
 
-    // If function is unknown, revert
-    0x00 0x00 revert 
+    0xcdfead2e
+    eq
 
-    // Execute correct function
-    setValue:
-        SET_VALUE()
-    getValue:
-        GET_VALUE()
+    updateJump
+    jumpi
+
+//     🔍 Step-by-Step Execution Flow
+// huff
+// Copy
+// Edit
+// 0xcdfead2e  // Expected function selector (updateHorseNumber)
+// eq          // Compares it with extracted function selector
+// updateJump  // Target label for the jump
+// jumpi  
+
+     // Jump if the comparison is true
+// 1️⃣ Function selector is compared (eq).
+
+// If it matches, stack has 1 (true).
+// If it does not match, stack has 0 (false).
+// 2️⃣ If the stack has 1, jumpi moves execution to updateJump.
+
+// The code skips ahead to updateJump: even though it appears later in the contract!
+// 3️⃣ Execution reaches updateJump: and runs SET_HorseNumber().
+
+// If the selector does not match, jumpi is ignored, and execution continues normally.
+// 🔹 Example Analogy: Think of a Movie Script 🎬
+// Imagine you're reading a movie script.
+
+// At line 10, the script says:
+// "If the villain enters, go to scene 50."
+// Scene 50 is written later in the script, but when the villain enters, the movie jumps to that scene.
+// The same happens here—execution "jumps" forward in the code if the condition is met.
+
+// 📌 TL;DR
+// ✅ Even though updateJump: is written later, jumpi can still go there.
+// ✅ jumpi doesn’t move line by line—it moves execution to a predefined label.
+// ✅ The EVM builds a jump table before running the contract, so the position of updateJump: doesn’t matter.
+
+
+
+
+    updateJump:
+        SET_HorseNumber()
 }
+
+#define macro SET_HorseNumber() = takes(0) returns(0) {}
