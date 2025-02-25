@@ -13,41 +13,6 @@
     updateJump
     jumpi
 
-//     🔍 Step-by-Step Execution Flow
-// huff
-// Copy
-// Edit
-// 0xcdfead2e  // Expected function selector (updateHorseNumber)
-// eq          // Compares it with extracted function selector
-// updateJump  // Target label for the jump
-// jumpi  
-
-     // Jump if the comparison is true
-// 1️⃣ Function selector is compared (eq).
-
-// If it matches, stack has 1 (true).
-// If it does not match, stack has 0 (false).
-// 2️⃣ If the stack has 1, jumpi moves execution to updateJump.
-
-// The code skips ahead to updateJump: even though it appears later in the contract!
-// 3️⃣ Execution reaches updateJump: and runs SET_HorseNumber().
-
-// If the selector does not match, jumpi is ignored, and execution continues normally.
-// 🔹 Example Analogy: Think of a Movie Script 🎬
-// Imagine you're reading a movie script.
-
-// At line 10, the script says:
-// "If the villain enters, go to scene 50."
-// Scene 50 is written later in the script, but when the villain enters, the movie jumps to that scene.
-// The same happens here—execution "jumps" forward in the code if the condition is met.
-
-// 📌 TL;DR
-// ✅ Even though updateJump: is written later, jumpi can still go there.
-// ✅ jumpi doesn’t move line by line—it moves execution to a predefined label.
-// ✅ The EVM builds a jump table before running the contract, so the position of updateJump: doesn’t matter.
-
-
-
 
     updateJump:
         SET_HorseNumber()
