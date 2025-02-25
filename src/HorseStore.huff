@@ -6,16 +6,24 @@
 
     // if f_sector == updateHorseNumber == 0xcdfead2e
     // if f_sector == readHorseNumber == 0xe026c017
-
+    dup1
     0xcdfead2e
     eq
-
     updateJump
     jumpi
 
+    0xe026c017
+    eq
+    readJump
+    jumpi
+
+    // Invalid function selector
+    readJump:
+        READ_HorseNumber()
 
     updateJump:
         SET_HorseNumber()
 }
 
 #define macro SET_HorseNumber() = takes(0) returns(0) {}
+#define macro READ_HorseNumber() = takes(0) returns(0) {}
