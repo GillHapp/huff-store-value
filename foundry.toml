@@ -1,6 +1,11 @@
 [profile.default]
-src = "src"
-out = "out"
+ffi = true
 libs = ["lib"]
+out = "out"
+src = "src"
 
+remappings = [
+    'foundry-huff/=lib/foundry-huff/src/',
+    '@openzeppelin/=lib/openzeppelin-contracts/',
+]
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
