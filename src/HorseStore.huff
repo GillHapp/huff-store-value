@@ -17,6 +17,9 @@
     readJump
     jumpi
 
+
+    // Invalid function selector revert 
+    0x00 0x00 revert   
     // Invalid function selector
     readJump:
         READ_HorseNumber()
